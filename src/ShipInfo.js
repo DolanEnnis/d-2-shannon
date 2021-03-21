@@ -1,11 +1,10 @@
 import { writable, derived, readable } from 'svelte/store';
-import Map from "./Map.svelte";
+
 
 
 let startValue = ({ lat: 52, latmin: 0, long: 9, longmin: 0, speed: 10, delay_hrs: 0, delay_mns: 0 })
 
 export const position = writable(startValue);
-
 function createOutput() {
     const { subscribe, set, update } = writable(getData(startValue));
 
@@ -16,7 +15,6 @@ function createOutput() {
 }
 
 function getData(pos) {
-    Map.setshipPosition
     let op = ({
         fromTime: new Date(),
         nextWP: "Bull",
