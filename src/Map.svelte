@@ -1,6 +1,7 @@
 <script>
-    import { position } from "./ShipInfo.js";
-    import { waypoints } from "./WP.js";
+    import { position, outputInfo } from "./ShipInfo.js";
+    import { waypoints, guard } from "./WP.js";
+    let out;
     let container;
     let map;
     let zoom = 7;
@@ -21,6 +22,10 @@
     function setMarker(wp) {
         const marker = new google.maps.Marker({
             position: { lat: wp.lat, lng: wp.long },
+            icon: {
+                path: google.maps.SymbolPath.CIRCLE,
+                scale: 2,
+            },
             map,
             title: "Hello World!",
         });
@@ -30,19 +35,27 @@
         });
     }
 
-    export function setShipPosition(pos) {
+    export const shipMarker = () => {
         //Show position of ship
-        console.log("I am here");
-        let shiplat = pos.lat * 1 + pos.latmin / 60;
-        let shiplong = pos.long * 1 + pos.longmin / 60;
-        console.log(shiplat);
+        let shiplat = $position.lat * 1 + $position.latmin / 60;
+        let shiplong = $position.long * 1 + $position.longmin / 60;
+        let shipPosition = { lat: shiplat, lng: -shiplong };
+        //console.log(shiplat);
         const marker = new google.maps.Marker({
-            position: { lat: shiplat, lng: -shiplong },
+            position: shipPosition,
             map,
             title: "Ship!",
         });
-    }
-    export const setshipPosition = setShipPosition($position);
+        // change zoom level of map
+        var KilcreadaunPos = new google.maps.LatLng(
+            waypoints[0].lat,
+            waypoints[0].long
+        );
+        var bounds = new google.maps.LatLngBounds();
+        bounds.extend(shipPosition);
+        bounds.extend(KilcreadaunPos);
+        map.fitBounds(bounds);
+    };
 </script>
 
 <div bind:this={container} />

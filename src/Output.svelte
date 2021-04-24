@@ -18,30 +18,30 @@
             </tr>
             <tr>
                 <td>Next Waypoint</td>
-                <td id="WP" />
+                <td>{$outputInfo.nextWP}</td>
             </tr>
             <tr>
                 <td>Distance to WP</td>
-                <td id="WPdist" />
+                <td>{$outputInfo.distToWP.toFixed(2)}'</td>
             </tr>
             <tr>
                 <td>Distance to Kilcreadan</td>
-                <td id="KillDist" />
+                <td>{$outputInfo.distToKil.toFixed(2)}'</td>
             </tr>
             <!--             <tr>
                 <td>&nbsp;</td>
             </tr> -->
             <tr>
                 <td>Time to Kilcreadan</td>
-                <td> <span id="KillTime" /> hrs</td>
+                <td> <span>{$outputInfo.timeToKil.toFixed(2)}</span> hrs</td>
             </tr>
             <tr>
                 <td>ETA Kilcreadan</td>
-                <td id="ETAKil" />
+                <td>{formatter.format($outputInfo.etaKil)}</td>
             </tr>
             <tr>
                 <td>ETA Scattery</td>
-                <td id="ETAScattery" />
+                <td>{formatter.format($outputInfo.etaScattery)}</td>
             </tr>
         </tbody>
     </table>
@@ -52,5 +52,9 @@
         display: flex;
         justify-content: left;
         align-content: flex-start;
+    }
+
+    td {
+        padding: 10px;
     }
 </style>

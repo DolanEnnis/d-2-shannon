@@ -1,5 +1,12 @@
 <script>
     import { position, outputInfo } from "./ShipInfo.js";
+    import { createEventDispatcher } from "svelte";
+
+    const dispatch = createEventDispatcher();
+
+    const submitPos = () => {
+        dispatch("submitted");
+    };
 </script>
 
 <div class="container-fluid m-2">
@@ -51,9 +58,7 @@
         <div class="longText">Min</div>
     </div>
     <div class="buttonitem">
-        <button class="button" on:click={outputInfo.increment($position)}
-            >Submit</button
-        >
+        <button class="button" on:click={submitPos}>Submit</button>
     </div>
 </container>
 
