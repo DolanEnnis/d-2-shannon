@@ -20,7 +20,7 @@ function createOutput() {
 function getData(pos) {
     let op = ({
         fromTime: new Date(),
-        nextWP: "Bull",
+        nextWP: { name: "Kilcreadaun", lat: 52.55333, long: -9.71667, dist: 0, use: "Kilcreadaun" },
         distToWP: 10,
         distToKil: 10,
         timeToKil: 10,
@@ -35,25 +35,19 @@ export const outputInfo = createOutput();
 
 
 function updateOp(pos, op) {
-    op.nextWP = nextWP(pos.lat / 1 + (pos.latmin / 60), pos.long / 1 + (pos.longmin / 60)).use
+    op.nextWP = nextWP(pos.lat / 1 + (pos.latmin / 60), pos.long / 1 + (pos.longmin / 60))
     //Get the time the ship was last seen
     var fromTime = new Date()
     fromTime.setMinutes(fromTime.getMinutes() - pos.delay_mns)
     fromTime.setHours(fromTime.getHours() - pos.delay_hrs)
     op.fromTime = fromTime
 
-    var wp
-    for (var i = 0; i < waypoints.length; i++) {
-        if (waypoints[i].name == op.nextWP) {
-            wp = waypoints[i]
-        }
-    }
 
     op.distToWP = distance(pos.lat / 1 + (pos.latmin / 60),
         -(pos.long / 1 + (pos.longmin / 60)),
-        wp.lat,
-        wp.long);
-    op.distToKil = (parseFloat(op.distToWP) + parseFloat(wp.dist));
+        op.nextWP.lat,
+        op.nextWP.long);
+    op.distToKil = (parseFloat(op.distToWP) + parseFloat(op.nextWP.dist));
     op.timeToKil = (op.distToKil / parseFloat(pos.speed));
     op.etaKil = new Date(op.fromTime.getTime());
     op.etaKil.setHours(op.fromTime.getHours() + op.timeToKil);
@@ -84,7 +78,13 @@ function nextWP(lat, long) {
             nearWP = points[i];
         }
     }
-    return nearWP;
+    var wp
+    for (var i = 0; i < waypoints.length; i++) {
+        if (waypoints[i].name == nearWP.use) {
+            wp = waypoints[i]
+        }
+    }
+    return wp;
 }
 
 

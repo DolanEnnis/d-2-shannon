@@ -18,7 +18,7 @@
             </tr>
             <tr>
                 <td>Next Waypoint</td>
-                <td>{$outputInfo.nextWP}</td>
+                <td>{$outputInfo.nextWP.name}</td>
             </tr>
             <tr>
                 <td>Distance to WP</td>

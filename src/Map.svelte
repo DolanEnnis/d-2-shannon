@@ -1,4 +1,5 @@
 <script>
+    import { createEventDispatcher } from "svelte";
     import { position, outputInfo } from "./ShipInfo.js";
     import { waypoints, guard } from "./WP.js";
     let out;
@@ -8,6 +9,8 @@
     let center = { lat: 52.5, lng: -9.71 };
 
     import { onMount } from "svelte";
+
+    const dispatch = createEventDispatcher();
 
     onMount(async () => {
         map = new google.maps.Map(container, {
@@ -31,7 +34,7 @@
         });
 
         marker.addListener("click", () => {
-            console.log("WP clicked: " + wp.dist);
+            dispatch("newWP");
         });
     }
 
@@ -40,11 +43,16 @@
         let shiplat = $position.lat * 1 + $position.latmin / 60;
         let shiplong = $position.long * 1 + $position.longmin / 60;
         let shipPosition = { lat: shiplat, lng: -shiplong };
-        //console.log(shiplat);
+        let text =
+            $outputInfo.fromTime.toLocaleTimeString() +
+            " ETA " +
+            $outputInfo.etaKil.toLocaleString();
+
+        console.log(text);
         const marker = new google.maps.Marker({
             position: shipPosition,
             map,
-            title: "Ship!",
+            title: text,
         });
         // change zoom level of map
         var KilcreadaunPos = new google.maps.LatLng(
@@ -55,6 +63,29 @@
         bounds.extend(shipPosition);
         bounds.extend(KilcreadaunPos);
         map.fitBounds(bounds);
+        console.log($outputInfo.nextWP);
+        //Draw Line from Ship to next WP
+        var line = [];
+        //clear old lines
+
+        /* for (var i = 0; i < line.length; i++) {
+            line[i].setVisible(false);
+        } */
+        var legCoordinates = [
+            { lat: $outputInfo.nextWP.lat, lng: $outputInfo.nextWP.long },
+            shipPosition,
+        ];
+        var firstLeg = new google.maps.Polyline();
+        firstLeg.setMap(null);
+        firstLeg = new google.maps.Polyline({
+            path: legCoordinates,
+            geodesic: true,
+            strokeColor: "#FF0000",
+            strokeOpacity: 1.0,
+            strokeWeight: 2,
+        });
+        line.push(firstLeg);
+        firstLeg.setMap(map);
     };
 </script>
 

@@ -12,6 +12,10 @@
         outputInfo.increment($position);
         mymap.shipMarker();
     };
+
+    const changeWP = () => {
+        console.log("new WP asked for!");
+    };
 </script>
 
 <svelte:head>
@@ -33,7 +37,7 @@
     </div>
     <div class="map">
         {#if ready}
-            <Map bind:this={mymap} />
+            <Map bind:this={mymap} on:newWP={changeWP} />
         {/if}
     </div>
 </div>
