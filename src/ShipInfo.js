@@ -14,13 +14,14 @@ function createOutput() {
     return {
         subscribe,
         increment: (pos) => update(now => getData(pos)),
+        inc: (wp, pos) => update(now => updateWP(wp, pos))
     };
 }
 
 function getData(pos) {
     let op = ({
         fromTime: new Date(),
-        nextWP: { name: "Kilcreadaun", lat: 52.55333, long: -9.71667, dist: 0, use: "Kilcreadaun" },
+        nextWP: nextWP(pos.lat / 1 + (pos.latmin / 60), pos.long / 1 + (pos.longmin / 60)),
         distToWP: 10,
         distToKil: 10,
         timeToKil: 10,
@@ -35,7 +36,7 @@ export const outputInfo = createOutput();
 
 
 function updateOp(pos, op) {
-    op.nextWP = nextWP(pos.lat / 1 + (pos.latmin / 60), pos.long / 1 + (pos.longmin / 60))
+
     //Get the time the ship was last seen
     var fromTime = new Date()
     fromTime.setMinutes(fromTime.getMinutes() - pos.delay_mns)
@@ -56,6 +57,21 @@ function updateOp(pos, op) {
     op.etaScattery.setMinutes(op.etaScattery.getMinutes() + (9 / pos.speed) * 60)
 }
 // Function to go through waypoints and find the next wapoint for shipPosition
+
+function updateWP(wp, pos) {
+
+    let op = ({
+        fromTime: new Date(),
+        nextWP: wp.wp, //don't ask me why it has given itself a double wrap!
+        distToWP: 10,
+        distToKil: 10,
+        timeToKil: 10,
+        etaKil: 12,
+        etaScattery: 12,
+    })
+    updateOp(pos, op)
+    return op
+}
 
 function nextWP(lat, long) {
     var nearestDist = 10000000;

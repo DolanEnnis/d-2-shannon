@@ -5,6 +5,7 @@
     import Input from "./Input.svelte";
     import Output from "./Output.svelte";
     import Map from "./Map.svelte";
+    import Slider from "./Slider.svelte";
     export let ready;
     let mymap;
 
@@ -13,8 +14,12 @@
         mymap.shipMarker();
     };
 
-    const changeWP = () => {
-        console.log("new WP asked for!");
+    const speedChange = () => {
+        outputInfo.increment($position);
+    };
+    const changeWP = (wp) => {
+        outputInfo.inc(wp, $position);
+        mymap.newroute();
     };
 </script>
 
@@ -34,13 +39,16 @@
 <div id="parent" style="display:flex; height:100%; ">
     <div id="left" class="center">
         <Output />
+        <div class="slider"><Slider on:speedChange={speedChange} /></div>
     </div>
+
     <div class="map">
         {#if ready}
-            <Map bind:this={mymap} on:newWP={changeWP} />
+            <Map bind:this={mymap} on:newWP={(e) => changeWP(e.detail)} />
         {/if}
     </div>
 </div>
+
 <Footer />
 
 <style>
@@ -60,10 +68,15 @@
     }
 
     .center {
+        display: flex;
+        flex-direction: column;
         flex: 3;
         text-align: left;
-        align-content: flex-start;
+        align-content: space-between;
         background-color: #c6e2ff;
+    }
+    .slider {
+        flex-grow: 2;
     }
 
     .map {

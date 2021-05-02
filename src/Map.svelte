@@ -7,6 +7,7 @@
     let map;
     let zoom = 7;
     let center = { lat: 52.5, lng: -9.71 };
+    var line = []; //List of lines ship to WP
 
     import { onMount } from "svelte";
 
@@ -30,11 +31,11 @@
                 scale: 2,
             },
             map,
-            title: "Hello World!",
+            title: wp.name,
         });
 
         marker.addListener("click", () => {
-            dispatch("newWP");
+            dispatch("newWP", { wp: wp });
         });
     }
 
@@ -47,8 +48,6 @@
             $outputInfo.fromTime.toLocaleTimeString() +
             " ETA " +
             $outputInfo.etaKil.toLocaleString();
-
-        console.log(text);
         const marker = new google.maps.Marker({
             position: shipPosition,
             map,
@@ -63,20 +62,42 @@
         bounds.extend(shipPosition);
         bounds.extend(KilcreadaunPos);
         map.fitBounds(bounds);
-        console.log($outputInfo.nextWP);
         //Draw Line from Ship to next WP
-        var line = [];
-        //clear old lines
 
-        /* for (var i = 0; i < line.length; i++) {
+        //clear old lines
+        for (var i = 0; i < line.length; i++) {
             line[i].setVisible(false);
-        } */
+        }
         var legCoordinates = [
             { lat: $outputInfo.nextWP.lat, lng: $outputInfo.nextWP.long },
             shipPosition,
         ];
         var firstLeg = new google.maps.Polyline();
-        firstLeg.setMap(null);
+        //firstLeg.setMap(null);
+        firstLeg = new google.maps.Polyline({
+            path: legCoordinates,
+            geodesic: true,
+            strokeColor: "#FF0000",
+            strokeOpacity: 1.0,
+            strokeWeight: 2,
+        });
+        line.push(firstLeg);
+        firstLeg.setMap(map);
+    };
+
+    export const newroute = () => {
+        let shiplat = $position.lat * 1 + $position.latmin / 60;
+        let shiplong = $position.long * 1 + $position.longmin / 60;
+        let shipPosition = { lat: shiplat, lng: -shiplong };
+        for (var i = 0; i < line.length; i++) {
+            line[i].setVisible(false);
+        }
+        var legCoordinates = [
+            { lat: $outputInfo.nextWP.lat, lng: $outputInfo.nextWP.long },
+            shipPosition,
+        ];
+        var firstLeg = new google.maps.Polyline();
+        //firstLeg.setMap(null);
         firstLeg = new google.maps.Polyline({
             path: legCoordinates,
             geodesic: true,
